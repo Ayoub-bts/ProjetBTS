@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervision Local Agricole</title>
+    <link rel="stylesheet" href="../CSS/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Supervision Local Agricole</h1>
+    </header>
+
+    <main>
+        <section id="grafana-dashboard">
+            <h2>Visualisation des Données</h2>
+            <iframe 
+                src="https://YOUR-GRAFANA-URL" 
+                width="100%" 
+                height="500px" 
+                frameborder="0">
+            </iframe>
+        </section>
+
+        <section id="alerts">
+            <h2>Alertes</h2>
+            <div id="alerts-container"></div>
+        </section>
+
+        <section id="historique">
+            <h2>Historique des Données</h2>
+            <button id="download-historique">Télécharger Historique</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Supervision Agricole</p>
+    </footer>
+
+    <script src="../JS/script.js" defer></script>
+</body>
+</html>
