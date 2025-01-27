@@ -2,7 +2,7 @@
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 
-class MQTTManager {
+class ConnexionMQTT {
 private:
     const char* ssid;
     const char* password;
@@ -42,7 +42,7 @@ CAUw7C29C79Fv1C5qfPrmAESrciIxpg0X40KPMbp1ZWVbd4=
 )EOF";
 
 public:
-    MQTTManager(const char* wifiSsid, const char* wifiPassword,
+    ConnexionMQTT(const char* wifiSsid, const char* wifiPassword,
                 const char* broker, int port, const char* topic,
                 const char* username = nullptr, const char* password = nullptr)
         : ssid(wifiSsid), password(wifiPassword), mqttBroker(broker),
