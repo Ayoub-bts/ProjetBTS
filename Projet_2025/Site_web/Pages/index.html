@@ -3,35 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supervision Local Agricole</title>
+    <title>Supervision d'un Local Agricole</title>
     <link rel="stylesheet" href="../CSS/styles.css">
 </head>
 <body>
-    <header>
-        <h1>Supervision Local Agricole</h1>
+    <header class="fullscreen-header">
+        <!-- Image utilisée comme background via CSS -->
+        <img src="../Images et vidéos/fromage.png" alt="Supervision Local Agricole" class="background-image">
+        <div class="header-content">
+            <h1>Supervision Local Agricole</h1>
+            <h2>Bienvenue sur le projet de sécurisation et de supervision d'un local agricole</h2>
+            <p>Présenté par EL MAHBOUL Ayoub, FATHI Adam, BEDRANI Imrane</p>
+        </div>
     </header>
 
-    <main>
-        <section id="grafana-dashboard">
-            <h2>Visualisation des Données</h2>
-            <iframe 
-                src="https://YOUR-GRAFANA-URL" 
-                width="100%" 
-                height="500px" 
-                frameborder="0">
-            </iframe>
-        </section>
+    <button class="burger-menu" id="burger-menu">
+        ☰
+    </button>
 
-        <section id="alerts">
-            <h2>Alertes</h2>
-            <div id="alerts-container"></div>
-        </section>
+    <nav id="navbar" class="hidden">
+        <ul>
+            <li><a href="../Pages/index.html" class="nav-item" data-active-color="orange">Accueil</a></li>
+            <li><a href="../Pages/Visualisation.html" class="nav-item" data-active-color="green">Visualisation des données</a></li>
+            <li><a href="../Pages/Alertes.html" class="nav-item" data-active-color="blue">Alertes</a></li>
+            <li><a href="../Pages/Historique.html" class="nav-item" data-active-color="red">Historique des données</a></li>
+            <li><a href="../Pages/Donnees.html" class="nav-item" data-active-color="purple">Données Enregistrées</a></li>
+        </ul>
+    </nav>
 
-        <section id="historique">
-            <h2>Historique des Données</h2>
-            <button id="download-historique">Télécharger Historique</button>
-        </section>
-    </main>
+    <main></main>
 
     <footer>
         <p>&copy; 2025 Supervision Agricole</p>
