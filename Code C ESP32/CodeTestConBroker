@@ -1,0 +1,147 @@
+#include <WiFi.h>                 // Gestion du WiFi
+#include <WiFiClientSecure.h>     // Pour les connexions sécurisées (SSL/TLS)
+#include <PubSubClient.h>         // Client MQTT
+
+// Configuration du réseau WiFi
+const char *ssid = "Adam";               // Nom du réseau WiFi
+const char *password = "123456789";             // Mot de passe WiFi
+
+// Configuration du Broker MQTT
+const char *mqtt_broker = "tebebeeb.ala.eu-central-1.emqxsl.com";
+const char *mqtt_topic_temp = "esp32/temp";
+const char *mqtt_topic_hum = "esp32/hum";
+const char *mqtt_username = "BTSESP";
+const char *mqtt_password = "123";
+const int mqtt_port = 8883;                     // Port sécurisé MQTT (SSL/TLS)
+
+float temperature = 22.5;
+float humidite = 56;
+String client_id = "esp32-temp-hum";
+
+// Client sécurisé et client MQTT
+WiFiClientSecure espClient;
+PubSubClient mqtt_client(espClient);
+
+// Certificat Root CA pour la connexion SSL/TLS
+const char *ca_cert = R"EOF(
+-----BEGIN CERTIFICATE-----
+MIIDrzCCApegAwIBAgIQCDvgVpBCRrGhdWrJWZHHSjANBgkqhkiG9w0BAQUFADBh
+MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
+d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBD
+QTAeFw0wNjExMTAwMDAwMDBaFw0zMTExMTAwMDAwMDBaMGExCzAJBgNVBAYTAlVT
+MRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5j
+b20xIDAeBgNVBAMTF0RpZ2lDZXJ0IEdsb2JhbCBSb290IENBMIIBIjANBgkqhkiG
+9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4jvhEXLeqKTTo1eqUKKPC3eQyaKl7hLOllsB
+CSDMAZOnTjC3U/dDxGkAV53ijSLdhwZAAIEJzs4bg7/fzTtxRuLWZscFs3YnFo97
+nh6Vfe63SKMI2tavegw5BmV/Sl0fvBf4q77uKNd0f3p4mVmFaG5cIzJLv07A6Fpt
+43C/dxC//AH2hdmoRBBYMql1GNXRor5H4idq9Joz+EkIYIvUX7Q6hL+hqkpMfT7P
+T19sdl6gSzeRntwi5m3OFBqOasv+zbMUZBfHWymeMr/y7vrTC0LUq7dBMtoM1O/4
+gdW7jVg/tRvoSSiicNoxBN33shbyTApOB6jtSj1etX+jkMOvJwIDAQABo2MwYTAO
+BgNVHQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUA95QNVbR
+TLtm8KPiGxvDl7I90VUwHwYDVR0jBBgwFoAUA95QNVbRTLtm8KPiGxvDl7I90VUw
+DQYJKoZIhvcNAQEFBQADggEBAMucN6pIExIK+t1EnE9SsPTfrgT1eXkIoyQY/Esr
+hMAtudXH/vTBH1jLuG2cenTnmCmrEbXjcKChzUyImZOMkXDiqw8cvpOp/2PV5Adg
+06O/nVsJ8dWO41P0jmP6P6fbtGbfYmbW0W5BjfIttep3Sp+dWOIrWcBAI+0tKIJF
+PnlUkiaY4IBIqDfv8NZ5YBberOgOzW6sRBc4L0na4UU+Krk2U886UAb3LujEV0ls
+YSEY1QSteDwsOoBrp+uvFRTp2InBuThs4pFsiv9kuXclVzDAGySj4dzp30d8tbQk
+CAUw7C29C79Fv1C5qfPrmAESrciIxpg0X40KPMbp1ZWVbd4=
+-----END CERTIFICATE-----
+)EOF";
+
+// Prototypes des fonctions
+void connectToWiFi();
+void connectToMQTTBroker();
+void mqttCallback(char *topic, byte *payload, unsigned int length);
+
+void setup() {
+    Serial.begin(115200);
+
+    // Connexion WiFi
+    connectToWiFi();
+
+    // Configuration du certificat SSL/TLS
+    espClient.setCACert(ca_cert);
+
+    // Configuration MQTT
+    mqtt_client.setServer(mqtt_broker, mqtt_port);
+    mqtt_client.setCallback(mqttCallback);
+
+    // Connexion au Broker MQTT
+    connectToMQTTBroker();
+}
+
+void loop() {
+    // Vérifier la connexion WiFi
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("WiFi déconnecté ! Tentative de reconnexion...");
+        connectToWiFi();
+    }
+
+    // Vérifier la connexion MQTT
+    if (!mqtt_client.connected()) {
+        Serial.println("MQTT déconnecté ! Tentative de reconnexion...");
+        connectToMQTTBroker();
+    }
+
+    mqtt_client.loop();
+
+    // Construire le payload InfluxDB Line Protocol
+    String payload_temp = "temperature,location=cave,device=" + client_id + " value=" + String(temperature);
+    String payload_hum = "humidity,location=cave,device=" + client_id + " value=" + String(humidite);
+    
+    // Publier sur MQTT
+    Serial.print("Publication MQTT : ");
+    Serial.println(payload_temp);
+    mqtt_client.publish(mqtt_topic_temp, payload_temp.c_str());
+    Serial.println("....................................................");
+    Serial.println(payload_hum);
+    mqtt_client.publish(mqtt_topic_hum, payload_hum.c_str());
+
+    // Délai entre chaque envoi
+    delay(5000);
+}
+
+void connectToWiFi() {
+    Serial.print("Connexion au réseau WiFi...");
+    WiFi.begin(ssid, password);
+
+    int attempts = 0;
+    while (WiFi.status() != WL_CONNECTED && attempts < 20) { // Limiter le nombre d'essais
+        delay(500);
+        Serial.print(".");
+        attempts++;
+    }
+
+    if (WiFi.status() == WL_CONNECTED) {
+        Serial.println("\nConnecté au réseau WiFi !");
+    } else {
+        Serial.println("\nÉchec de connexion au WiFi !");
+    }
+}
+
+void connectToMQTTBroker() {
+    while (!mqtt_client.connected()) {
+        Serial.printf("Connexion au Broker MQTT avec l'ID client : %s\n", client_id.c_str());
+
+        if (mqtt_client.connect(client_id.c_str(), mqtt_username, mqtt_password)) {
+            Serial.println("Connecté au Broker MQTT");
+
+            // Souscription au topic (facultatif si juste publication)
+            mqtt_client.subscribe(mqtt_topic_temp);
+            mqtt_client.subscribe(mqtt_topic_hum);
+        } else {
+            Serial.print("Échec de connexion au Broker MQTT, code d'erreur : ");
+            Serial.println(mqtt_client.state());
+            delay(5000);
+        }
+    }
+}
+
+void mqttCallback(char *topic, byte *payload, unsigned int length) {
+    Serial.printf("Message reçu sur le topic : %s\n", topic);
+    Serial.print("Message : ");
+    for (unsigned int i = 0; i < length; i++) {
+        Serial.print((char)payload[i]);
+    }
+    Serial.println("\n-----------------------");
+}
