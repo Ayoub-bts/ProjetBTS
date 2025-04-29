@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique</title>
+    <link rel="stylesheet" href="./css/style_site.css">
+</head>
+<body>
+    <!-- Header avec l'image en background -->
+    <header class="fullscreen-header">
+        <img src="./img/cavevin.jpg" alt="Supervision Local Agricole" class="background-image">
+        <div class="header-content">
+            <h1>Historique des données</h1>
+        </div>
+    </header>
+
+    <!-- Burger menu -->
+    <button class="burger-menu" id="burger-menu">
+        ☰
+    </button>
+
+    <!-- Navbar -->
+    <nav id="navbar" class="hidden">
+        <ul>
+            <li><a href="./site.html" class="nav-item" data-active-color="orange">Accueil</a></li>
+            <li><a href="./Visualisation.html" class="nav-item" data-active-color="green">Visualisation des données</a></li>
+            <li><a href="./Alertes.html" class="nav-item" data-active-color="blue">Alertes</a></li>
+            <li><a href="./Historique.html" class="nav-item" data-active-color="red">Historique des données</a></li>
+            <li><a href="./Donnees.html" class="nav-item" data-active-color="purple">Données Enregistrées</a></li>
+            <li><a href="/logout" class="nav-item" data-active-color="purple">Déconnexion</a></li>
+        </ul>
+    </nav>
+
+    <!-- Section principale -->
+    <main>
+        <h2>Historique des Données</h2>
+        <p>Voici les données enregistrées :</p>
+
+        <!-- Tableau dynamique -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Valeur (Humidité)</th>
+                    <th>CO2</th>
+                    <th>Date et Heure</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Exemple de données statiques -->
+                <tr>
+                    <td>1</td>
+                    <td>55</td>
+                    <td>20</td>
+                    <td>2025-01-17 10:30</td>
+                    
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>60</td>
+                    <td>25</td>
+                    <td>2025-01-17 11:00</td>
+                    
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Bouton de téléchargement -->
+        <div class="download-container">
+            <button class="btn-grad">Télécharger les données</button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Supervision Agricole</p>
+    </footer>
+
+    <!-- Script JS -->
+    <script src="./js/script.js" defer></script>
+</body>
+</html>

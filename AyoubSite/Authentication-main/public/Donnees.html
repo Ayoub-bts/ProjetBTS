@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Données</title>
+    <link rel="stylesheet" href="./css/style_site.css">
+</head>
+
+<script>
+    fetch('http://localhost:3000/donnees')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // ou insère dans le DOM
+            const panel = document.getElementById('dashboard-panels');
+            data.forEach(entry => {
+                const div = document.createElement('div');
+                div.textContent = `Valeur : ${entry.valeur} °C | Date : ${entry.date_heure}`;
+                panel.appendChild(div);
+            });
+        })
+        .catch(error => console.error('Erreur fetch:', error));
+</script>
+
+
+<body>
+    <header class="fullscreen-header">
+        <img src="./img/cavevin.jpg" alt="Supervision Local Agricole" class="background-image">
+        <div class="header-content">
+            <iframe src="https://ayoubelmahboul.grafana.net/public-dashboards/f062d20511d94773a8db121b449a0d8c" width="450" height="200" frameborder="0"></iframe>
+        </div>
+    </header>
+
+    <button class="burger-menu" id="burger-menu">
+        ☰
+    </button>
+
+    <nav id="navbar" class="hidden">
+        <ul>
+            <li><a href="./site.html" class="nav-item" data-active-color="orange">Accueil</a></li>
+            <li><a href="./Visualisation.html" class="nav-item" data-active-color="green">Visualisation des données</a></li>
+            <li><a href="./Alertes.html" class="nav-item" data-active-color="blue">Alertes</a></li>
+            <li><a href="./Historique.html" class="nav-item" data-active-color="red">Historique des données</a></li>
+            <li><a href="./Donnees.html" class="nav-item" data-active-color="purple">Données Enregistrées</a></li>
+            <li><a href="/logout" class="nav-item" data-active-color="purple">Déconnexion</a></li>
+        </ul>
+    </nav>
+
+
+    <footer>
+        <p>&copy; 2025 Supervision Agricole</p>
+    </footer>
+
+    <script src="./js/script.js" defer></script>
+</body>
+</html>
